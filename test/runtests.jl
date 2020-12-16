@@ -17,7 +17,8 @@ using RootHitFiles, Test, Tables
         f = RootHitFile("test.root.hits")
 
         e1 = read(f)
-        @test all(e1.eventnum .== 624)
+        @test e1.eventnum == 624
+        @test e1.primcount == 3
 
         @test all(e1.pos[1]     .≈ (1.60738, -2.07026, -201.594))
         @test e1.E[1]            ≈ 0.1638
@@ -36,7 +37,8 @@ using RootHitFiles, Test, Tables
         @test e1.volumeID[end]    == "physiDet"
 
         e2 = read(f)
-        @test all(e2.eventnum .== 632)
+        @test e2.eventnum == 632
+        @test e2.primcount == 3
 
         @test all(e2.pos[1]     .≈ (-1.16375, 1.16453, -197.114))
         @test e2.E[1]            ≈ 0.01478
@@ -55,7 +57,8 @@ using RootHitFiles, Test, Tables
         @test e2.volumeID[end]    == "physiDet"
 
         ef = collect(f)[end]
-        @test all(ef.eventnum .== 1559)
+        @test ef.eventnum == 1559
+        @test ef.primcount == 5
 
         @test all(ef.pos[1]     .≈ (-0.109196, 2.10771, -196.751))
         @test ef.E[1]            ≈ 0.03819
@@ -100,6 +103,15 @@ using RootHitFiles, Test, Tables
     @testset "Tables Interface" begin
         f = RootHitFile("test.root.hits")
 
-        @test Tables.partitions(f) == f
+        @test Tables.istable(typeof(f))
+
+        @test Tables.rowaccess(typeof(f))
+        @test Tables.rows(f) === f
+
+        ctbl = columntable(f)
+        @test ctbl.eventnum == [624, 632, 1150, 1266, 1447, 1488, 1559]
+
+        rtbl = rowtable(RootHitFile("test.root.hits"))
+        @test first(rtbl) == first(RootHitFile("test.root.hits"))
     end
 end
