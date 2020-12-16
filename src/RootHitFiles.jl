@@ -3,7 +3,6 @@ module RootHitFiles
 import Base, Tables
 
 using Mmap: mmap
-using Base: IOBuffer
 using Parsers
 using StaticArrays
 
