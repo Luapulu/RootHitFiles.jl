@@ -23,9 +23,9 @@ RootHitFile(path::AbstractString) = occursin(r".root.hits$", path) ? RootHitFile
     throw(ArgumentError("$path is not a .root.hits file"))
 
 EventTuple = NamedTuple{
-    (:eventnum, :pos, :E, :time, :particleID, :trkID, :trkparentID, :volumeID),
+    (:eventnum, :primcount, :pos, :E, :time, :particleID, :trkID, :trkparentID, :volumeID),
     Tuple{
-        Vector{Int32}, Vector{SVector{3, Float32}}, Vector{Float32}, Vector{Float32},
+        Int32, Int32, Vector{SVector{3, Float32}}, Vector{Float32}, Vector{Float32},
         Vector{Int32}, Vector{Int32}, Vector{Int32}, Vector{String}
     }
 }
@@ -61,7 +61,7 @@ function Base.read(f::RootHitFile)
     end
 
     return EventTuple((
-        fill(eventnum, (hitcount,)), pos, E, time,
+        eventnum, primcount, pos, E, time,
         particleID, trkID, trkparentID, volumeID
     ))
 end
@@ -75,8 +75,9 @@ end
 
 Base.IteratorSize(::Type{RootHitFile}) = Base.SizeUnknown()
 Base.IteratorEltype(::Type{RootHitFile}) = Base.HasEltype()
-Base.eltype(f::RootHitFile) = EventTuple
+Base.eltype(::RootHitFile) = EventTuple
 
-Tables.partitions(f::RootHitFile) = f
+Tables.isrowtable(::Type{RootHitFile}) = true
+Tables.schema(f::RootHitFile) = Tables.Schema(eltype(f))
 
 end # RootHitFiles
