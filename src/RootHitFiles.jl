@@ -10,8 +10,8 @@ export RootHitFile
 """
     RootHitFile(file::Union{IOStream, AbstractString})
 
-represents a `.root.hits` file, which can be iterated or read to yield events, which are tables of
-hits.
+represents a `.root.hits` file, which can be iterated or read to yield events, which are
+tables of hits.
 """
 struct RootHitFile
     stream::IOBuffer
